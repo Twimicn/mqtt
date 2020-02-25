@@ -51,7 +51,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 <script>
     (function () {
-        let client = new Paho.MQTT.Client('192.168.220.131', 9001, '/mqtt', "qiezi" + (new Date().getTime()));
+        let client = new Paho.MQTT.Client('39.97.112.200', 9001, '/mqtt', "qiezi" + (new Date().getTime()));
 
         let txt_topic = document.getElementById('txt_topic');
         let txt_message = document.getElementById('txt_message');
