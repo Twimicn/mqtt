@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template and Humidity</title>
+    <link rel="stylesheet" href="https://c.bunnies.cc/src/cappuccino.css">
+    <style>
+        .input-group {
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .bcu.btn {
+            margin: 0.2rem;
+        }
+
+        .bcu.checkbox,
+        .bcu.radio,
+        .bcu.switch {
+            margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+        }
+
+        .txt-inline {
+            display: inline-block;
+            width: 200px;
+            margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="input-group">
+    <label for="txt_tmp">Temperature:</label>
+    <input id="txt_tmp" class="bcu input" type="text"/>
+</div>
+<div class="input-group">
+    <label for="txt_hum">Humidity:</label>
+    <input id="txt_hum" class="bcu input" type="text"/>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+<script>
+    (function () {
+        let client = new Paho.MQTT.Client('39.97.112.200', 9001, '/mqtt', "qiezi" + (new Date().getTime()));
+
+        let txt_tmp = document.getElementById('txt_tmp');
+        let txt_hum = document.getElementById('txt_hum');
+
+        function onMessage(msg) {
+            console.log(msg);
+            let data = JSON.parse(msg.payloadString);
+            txt_tmp.value = data.temp;
+            txt_hum.value = data.humi;
+        }
+
+        function onConnected() {
+            client.subscribe('/little/qiezi/th', {qos: 0});
+            console.log("CONNECTED");
+        }
+
+        client.onMessageArrived = onMessage;
+
+        client.connect({
+            onSuccess: onConnected,
+        });
+    })();
+</script>
+</body>
+</html>
