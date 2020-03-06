@@ -27,31 +27,38 @@
             width: 200px;
             margin: 0.2rem 0.2rem 0.2rem 0.2rem;
         }
+        
+        .bcu.strawberry {
+            --primary: #f02064;
+            --primary-hover: #ff3478;
+            --primary-active: #dc0c50;
+            --primary-focus:rgba(240,32,100,0.5);
+        }
     </style>
 </head>
 <body>
 <div class="input-group">
     <div class="txt-inline">
         <label for="txt_topic">Topic:</label>
-        <input id="txt_topic" class="bcu input" type="text" value="/little/qiezi"/>
+        <input id="txt_topic" class="bcu input strawberry" type="text" value="/little/qiezi"/>
     </div>
-    <button id="btn_subscribe" class="bcu btn" disabled>Subscribe</button>
+    <button id="btn_subscribe" class="bcu btn strawberry" disabled>Subscribe</button>
 </div>
 <div class="input-group">
     <label for="txt_message">Messages:</label>
-    <div id="txt_message" class="bcu input" style="height: 400px;overflow-x: hidden;overflow-y: auto;"></div>
+    <div id="txt_message" class="bcu input strawberry" style="height: 400px;overflow-x: hidden;overflow-y: auto;"></div>
 </div>
 <div class="input-group">
     <div class="txt-inline">
         <label for="txt_in">Input:</label>
-        <input id="txt_in" class="bcu input" type="text" value=""/>
+        <input id="txt_in" class="bcu input strawberry" type="text" value=""/>
     </div>
-    <button id="btn_send" class="bcu btn" disabled>Send</button>
+    <button id="btn_send" class="bcu btn strawberry" disabled>Send</button>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 <script>
     (function () {
-        let client = new Paho.MQTT.Client('39.97.112.200', 9001, '/mqtt', "qiezi" + (new Date().getTime()));
+        let client = new Paho.MQTT.Client('wss://q.twimi.cn/mqtt', "qiezi" + (new Date().getTime()));
 
         let txt_topic = document.getElementById('txt_topic');
         let txt_message = document.getElementById('txt_message');
