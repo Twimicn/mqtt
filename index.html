@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>MQTT Test</title>
+    <title>MQTT over Websocket</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="https://c.bunnies.cc/src/cappuccino.css">
@@ -143,6 +143,7 @@
         });
 
         btn_send.addEventListener('click', _ => {
+            if (!txt_in.value) return;
             client.send(txt_topic.value, txt_in.value, 0);
             txt_in.value = '';
         });
