@@ -121,6 +121,7 @@
 
         function onConnected() {
             log(`Connected to ${txt_server.value}`, "success");
+            btn_connect.setAttribute('disabled', 'disabled');
             btn_subscribe.removeAttribute('disabled');
         }
 
