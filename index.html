@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://c.bunnies.cc/src/cappuccino.css">
     <style>
         .input-group {
-            padding: 1rem;
+            padding: 0.5rem;
             box-sizing: border-box;
         }
 
@@ -27,16 +27,47 @@
             width: 200px;
             margin: 0.2rem 0.2rem 0.2rem 0.2rem;
         }
-        
-        .bcu.strawberry {
-            --primary: #f02064;
-            --primary-hover: #ff3478;
-            --primary-active: #dc0c50;
-            --primary-focus:rgba(240,32,100,0.5);
+
+        .msg-pad {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #aaaaaa;
+        }
+
+        .msg-error {
+            font-size: 0.75rem;
+            color: red;
+        }
+
+        .msg-success {
+            font-size: 0.75rem;
+            color: green;
+        }
+
+        .msg-info {
+            font-size: 0.75rem;
+            color: blue;
+        }
+
+        .msg-data {
+            color: black;
+            font-size: 1.5rem;
+            background: aliceblue;
+            padding: 0.25rem 1rem;
         }
     </style>
 </head>
 <body>
+<datalist id="servers">
+    <option value="wss://mqtt.eclipse.org/mqtt"></option>
+    <option value="wss://q.twimi.cn/mqtt"></option>
+</datalist>
+<div class="input-group">
+    <div class="txt-inline">
+        <label for="txt_server">Server:</label>
+        <input id="txt_server" class="bcu input strawberry" type="text" value="" list="servers"/>
+    </div>
+    <button id="btn_connect" class="bcu btn strawberry">Connect</button>
+</div>
 <div class="input-group">
     <div class="txt-inline">
         <label for="txt_topic">Topic:</label>
@@ -58,40 +89,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 <script>
     (function () {
-        let client = new Paho.MQTT.Client('wss://q.twimi.cn/mqtt', "qiezi" + (new Date().getTime()));
+        let client;
 
+        let txt_server = document.getElementById('txt_server');
         let txt_topic = document.getElementById('txt_topic');
         let txt_message = document.getElementById('txt_message');
         let txt_in = document.getElementById('txt_in');
+        let btn_connect = document.getElementById('btn_connect');
         let btn_subscribe = document.getElementById('btn_subscribe');
         let btn_send = document.getElementById('btn_send');
+
+        function log(msg, type) {
+            tyep = type || 'data';
+            let p = document.createElement('div');
+            p.classList.add('msg-pad');
+            p.innerHTML = `<p class="msg-${type}">${msg}</p>`;
+            txt_message.append(p);
+        }
 
         function onMessage(msg) {
             console.log(msg);
             let p = document.createElement('div');
-            p.innerHTML = `<p style="color: green;">Topic:${msg.destinationName}</p><p style="color: blue">Message:${msg.payloadString}</p>`;
+            p.classList.add('msg-pad');
+            let pre = document.createElement('pre');
+            pre.innerText = msg.payloadString;
+            pre.classList.add('msg-data');
+            p.innerHTML = `<p class="msg-success">Topic:${msg.destinationName}</p><p class="msg-info">Message:</p>`;
+            p.append(pre);
             txt_message.append(p);
         }
 
         function onConnected() {
-            console.log("CONNECTED");
+            log(`Connected to ${txt_server.value}`, "success");
             btn_subscribe.removeAttribute('disabled');
         }
 
-        client.onMessageArrived = onMessage;
-
-        client.connect({
-            onSuccess: onConnected,
+        btn_connect.addEventListener('click', _ => {
+            if (!txt_server.value) return;
+            client = new Paho.MQTT.Client(txt_server.value, "qiezi" + (new Date().getTime()));
+            client.onMessageArrived = onMessage;
+            client.connect({
+                onSuccess: onConnected,
+            });
         });
 
         btn_subscribe.addEventListener('click', _ => {
+            if (!txt_topic.value) return;
             client.subscribe(txt_topic.value, {qos: 0});
+            log(`Subscribe topic: ${txt_topic.value}`, "success");
             btn_subscribe.setAttribute('disabled', 'disabled');
             btn_send.removeAttribute('disabled');
         });
 
         btn_send.addEventListener('click', _ => {
-            client.send(txt_topic.value, txt_in.value, 0)
+            client.send(txt_topic.value, txt_in.value, 0);
             txt_in.value = '';
         });
     })();
